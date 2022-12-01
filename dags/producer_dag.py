@@ -19,7 +19,6 @@ def join_orders_customers(filtered_orders_table: Table, customers_table: Table):
     FROM {{filtered_orders_table}} f JOIN {{customers_table}} c
     ON f.customer_id = c.customer_id"""
 
-# Basic DAG definition. Run the DAG starting January 1st, 2019 on a daily schedule.
 with DAG(
     dag_id="producer_dag",
     start_date=datetime(2019, 1, 1),

@@ -23,7 +23,6 @@ def transform_dataframe(df_1: DataFrame, df_2: DataFrame):
     print("Total amounts in Reporting:", amounts_reporting.sum())
     return amounts_orders.sum(), amounts_reporting.sum()
 
-# Basic DAG definition. Run the DAG starting January 1st, 2019 on a daily schedule.
 with DAG(
     dag_id="consumer_dag_2",
     start_date=datetime(2019, 1, 1),
