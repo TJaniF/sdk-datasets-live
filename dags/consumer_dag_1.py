@@ -1,23 +1,35 @@
 from pendulum import datetime
-
-from airflow.operators.empty import EmptyOperator
 from airflow.models import DAG
 from airflow import Dataset
 from pandas import DataFrame
-
-# Import decorators and classes from the SDK
 from astro import sql as aql
-from astro.files import File
 from astro.sql.table import Table
 
+orders_table_dataset = Dataset("astro://snowflake_default@?table=orders_table")
 
-reporting_table_dataset = Dataset("astro://snowflake_default@?table=reporting_table")
+# Define constants for interacting with external systems
+SNOWFLAKE_CONN_ID = "snowflake_default"
+SNOWFLAKE_ORDERS = "orders_table"
 
+# Define a function for transforming tables to dataframes
+@aql.dataframe
+def transform_dataframe(df: DataFrame):
+    amounts = df.loc[:, "amount"]
+    print("Total amount:", amounts.sum())
+    return amounts.sum()
+
+# Basic DAG definition. Run the DAG starting January 1st, 2019 on a daily schedule.
 with DAG(
     dag_id="consumer_dag_1",
     start_date=datetime(2019, 1, 1),
-    schedule=[reporting_table_dataset],
+    schedule=[orders_table_dataset],
     catchup=False,
 ):
 
-    t1 = EmptyOperator(task_id="t1")
+    # Transform the reporting table into a dataframe
+    sum_orders = transform_dataframe(
+        Table(
+            name=SNOWFLAKE_ORDERS,
+            conn_id=SNOWFLAKE_CONN_ID,
+        )
+    )
