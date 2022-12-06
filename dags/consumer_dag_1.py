@@ -5,11 +5,13 @@ from pandas import DataFrame
 from astro import sql as aql
 from astro.sql.table import Table
 
-orders_table_dataset = Dataset("astro://snowflake_default@?table=orders_table")
-
 # Define constants for interacting with external systems
 SNOWFLAKE_CONN_ID = "snowflake_default"
 SNOWFLAKE_ORDERS = "orders_table"
+
+# Define datasets
+orders_table_dataset = Table(conn_id=SNOWFLAKE_CONN_ID, name=SNOWFLAKE_ORDERS)
+#orders_table_dataset = Dataset("astro://snowflake_default@?table=orders_table")
 
 # Define a function for transforming tables to dataframes
 @aql.dataframe
